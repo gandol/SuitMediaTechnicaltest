@@ -1,8 +1,14 @@
 import React from "react";
-import {View} from "react-native";
-import {MediumText} from "./src/components/molecules/Text/MainText";
-import SignScreen from "./src/screen/auth/SignScreen";
+import AppNavigation from "./src/navigation";
+import {Provider} from "react-redux";
+import store from "./src/redux";
+import {enableLatestRenderer} from "react-native-maps";
 
 export default function App(): React.ReactElement {
-    return <SignScreen />;
+    enableLatestRenderer();
+    return (
+        <Provider store={store}>
+            <AppNavigation />
+        </Provider>
+    );
 }

@@ -1,7 +1,7 @@
 import React from "react";
-import {TouchableOpacity, View} from "react-native";
-import Colors from "../../Constant/Color";
-import {MediumText} from "./Text/MainText";
+import {TouchableOpacity} from "react-native";
+import Colors from "../../../Constant/Color";
+import {MediumText} from "../Text/MainText";
 
 type ButtonMainProps = {
     title: string;

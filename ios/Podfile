@@ -6,6 +6,9 @@ install! 'cocoapods', :deterministic_uuids => false
 
 target 'SuitMediaTechnicalTest' do
   config = use_native_modules!
+   # react-native-maps dependencies
+    pod 'GoogleMaps', '5.1.0'
+    pod 'Google-Maps-iOS-Utils' , '3.10.3'
 
   # Flags change depending on the env values.
   flags = get_default_flags()
