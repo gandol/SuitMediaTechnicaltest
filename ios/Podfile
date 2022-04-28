@@ -19,6 +19,7 @@ target 'SuitMediaTechnicalTest' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+
   target 'SuitMediaTechnicalTestTests' do
     inherit! :complete
     # Pods for testing
