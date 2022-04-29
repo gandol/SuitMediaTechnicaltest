@@ -6,7 +6,6 @@ import SignScreen from "../screen/auth/SignScreen";
 import HomeScreen from "../screen/main/HomeScreen";
 import ListAllUsersScreen from "../screen/main/ListUsers";
 import WebViewScreen from "../screen/main/WebviewScreen";
-import Mapscreen from "../screen/main/Mapscreen";
 
 const MainNavigation = createStackNavigator<RootStackParamList>();
 export default function AppNavigation(): React.ReactElement {
@@ -37,13 +36,6 @@ export default function AppNavigation(): React.ReactElement {
                 <MainNavigation.Screen
                     name={MainRoutes.WebViewScreen}
                     component={WebViewScreen}
-                    options={{
-                        headerShown: false,
-                    }}
-                />
-                <MainNavigation.Screen
-                    name={MainRoutes.UsersMapScreen}
-                    component={Mapscreen}
                     options={{
                         headerShown: false,
                     }}

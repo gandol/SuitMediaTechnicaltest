@@ -1,6 +1,7 @@
 import {createAction, createReducer} from "@reduxjs/toolkit";
 import {UserDataType} from "../../util/type/UserReponseType";
 import {RootState} from "../index";
+import {markerList} from "../../Constant/Markerlist";
 
 const initialStae: UserDataType[] = [];
 
@@ -26,7 +27,21 @@ export const resetUserList = createAction("RESET_USER_LIST");
 
 const UserListReducer = createReducer(initialStae, builder => {
     builder.addCase(setUserList, (state, action) => {
-        return action.payload;
+        const coords = markerList;
+        const newData = action.payload.map((user: UserDataType, index) => {
+            if (index < coords.length) {
+                console.log(index);
+                return {
+                    ...user,
+                    latitude: coords[index].lat,
+                    longitude: coords[index].long,
+                };
+            }
+            return {
+                ...user,
+            };
+        });
+        return newData;
     });
     builder.addCase(addUserInList, (state, action) => {
         const newUser = action.payload;

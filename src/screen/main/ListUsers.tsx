@@ -13,7 +13,7 @@ import Endpoints from "../../Constant/Endpoints";
 import {UsersListCard} from "../../components/molecules/Cards/UsersListCard";
 import Colors from "../../Constant/Color";
 import {useReduxDispatch, useReduxSelector} from "../../redux";
-import {setSelectedUser} from "../../redux/state/UserState";
+import {getSelectedUser, setSelectedUser} from "../../redux/state/UserState";
 import {MainRoutes, RootStackScreenProps} from "../../util/type/NavigationType";
 import {MainHeight} from "../../Constant/MainHeight";
 import {
@@ -21,16 +21,20 @@ import {
     resetUserList,
     setUserList,
 } from "../../redux/state/UserListState";
-import {markerList} from "../../Constant/Markerlist";
+import Mapscreen from "./Mapscreen";
+import {RegularText} from "../../components/molecules/Text/MainText";
 
 type Props = {
     navigation: RootStackScreenProps<MainRoutes.UsersListScreen>;
 };
+type Mode = "list" | "map";
 export default function ListAllUsersScreen({navigation}: Props) {
     // const [users, setUsers] = React.useState<UserDataType[]>([]);
     const [isLoading, setIsLoading] = React.useState(true);
     const [page, setPage] = React.useState(1);
+    const [currentMode, setCurrentMode] = React.useState<Mode>("list");
     const users = useReduxSelector(getUserList);
+    const selectedUser = useReduxSelector(getSelectedUser);
     const dispatch = useReduxDispatch();
 
     const getUsersData = async (
@@ -56,14 +60,8 @@ export default function ListAllUsersScreen({navigation}: Props) {
                             oldtusers.push(user);
                         }
                     });
-                    tmpData = oldtusers;
+                    tmpData = [...oldtusers];
                 }
-                tmpData.map((user, index) => {
-                    if (markerList.length > index) {
-                        user.latitude = markerList[index].lat;
-                        user.longitude = markerList[index].long;
-                    }
-                });
                 dispatch(setUserList(tmpData));
                 setIsLoading(false);
             }
@@ -83,15 +81,24 @@ export default function ListAllUsersScreen({navigation}: Props) {
             </SafeAreaView>
         );
     }
+    if (!isLoading && users.length === 0) {
+        return (
+            <SafeAreaView>
+                <RegularText>No users found</RegularText>
+            </SafeAreaView>
+        );
+    }
 
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: "white"}}>
             <NavigationalHeader
                 title={"Users"}
                 canGoBack={true}
-                iconName={"map-marker-alt"}
+                iconName={currentMode === "list" ? "map-marker-alt" : "list-ul"}
                 onPressIcon={() =>
-                    navigation.navigate(MainRoutes.UsersMapScreen)
+                    currentMode === "list"
+                        ? setCurrentMode("map")
+                        : setCurrentMode("list")
                 }
                 // iconName={"list-ul"}
             />
@@ -100,46 +107,54 @@ export default function ListAllUsersScreen({navigation}: Props) {
                     width: "100%",
                     height: MainHeight,
                 }}>
-                <FlatList
-                    refreshControl={
-                        <RefreshControl
-                            refreshing={isLoading}
-                            onRefresh={() => {
-                                dispatch(resetUserList());
-                                setPage(1);
-                                getUsersData(1, true);
-                            }}
-                        />
-                    }
-                    onEndReachedThreshold={0.1}
-                    onEndReached={() => {
-                        // console.log("onEndReached");
-                        setPage(page + 1);
-                        getUsersData(page + 1, false);
-                    }}
-                    data={users}
-                    renderItem={({item}) => (
-                        <UsersListCard
-                            name={`${item.first_name} ${item.last_name}`}
-                            email={item.email}
-                            image={item.avatar}
-                            onPress={() => {
-                                dispatch(
-                                    setSelectedUser({
-                                        fullName: `${item.first_name} ${item.last_name}`,
-                                        email: item.email,
-                                        website: "https://suitmedia.com/",
-                                        avatar: item.avatar,
-                                    }),
-                                );
-                                navigation.reset({
-                                    index: 0,
-                                    routes: [{name: MainRoutes.HomeScreen}],
-                                });
-                            }}
-                        />
-                    )}
-                />
+                {currentMode === "list" ? (
+                    <FlatList
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={isLoading}
+                                onRefresh={() => {
+                                    dispatch(resetUserList());
+                                    setPage(1);
+                                    getUsersData(1, true);
+                                }}
+                            />
+                        }
+                        onEndReachedThreshold={0.1}
+                        onEndReached={() => {
+                            // console.log("onEndReached");
+                            setPage(page + 1);
+                            getUsersData(page + 1, false);
+                        }}
+                        data={users}
+                        renderItem={({item}) => (
+                            <UsersListCard
+                                name={`${item.first_name} ${item.last_name}`}
+                                email={item.email}
+                                image={item.avatar}
+                                onPress={() => {
+                                    dispatch(
+                                        setSelectedUser({
+                                            fullName: `${item.first_name} ${item.last_name}`,
+                                            email: item.email,
+                                            website: "https://suitmedia.com/",
+                                            avatar: item.avatar,
+                                        }),
+                                    );
+                                    if (selectedUser) {
+                                        navigation.goBack();
+                                        return;
+                                    }
+                                    navigation.reset({
+                                        index: 0,
+                                        routes: [{name: MainRoutes.HomeScreen}],
+                                    });
+                                }}
+                            />
+                        )}
+                    />
+                ) : (
+                    <Mapscreen />
+                )}
             </View>
         </SafeAreaView>
     );

@@ -12,7 +12,6 @@ export enum MainRoutes {
     HomeScreen = "HomeScreen",
     WebViewScreen = "WebViewScreen",
     UsersListScreen = "UsersListScreen",
-    UsersMapScreen = "UsersMapScreen",
 }
 
 export type RootStackParamList = {
@@ -20,7 +19,6 @@ export type RootStackParamList = {
     [MainRoutes.HomeScreen]: undefined;
     [MainRoutes.WebViewScreen]: {url: string | undefined};
     [MainRoutes.UsersListScreen]: undefined;
-    [MainRoutes.UsersMapScreen]: undefined;
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> =

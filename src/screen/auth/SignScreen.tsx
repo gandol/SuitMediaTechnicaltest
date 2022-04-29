@@ -14,6 +14,7 @@ import {checkPalindrome} from "../../util/function/PalindromeCheck";
 import {MainRoutes, RootStackScreenProps} from "../../util/type/NavigationType";
 import {useReduxDispatch} from "../../redux";
 import {setUserName} from "../../redux/state/UserState";
+import {useToast} from "react-native-toast-notifications";
 
 const {width} = Dimensions.get("window");
 type Props = {
@@ -23,10 +24,18 @@ export default function SignScreen({navigation}: Props): React.ReactElement {
     const [name, setName] = React.useState("");
     const [palinddrome, setPalinddrome] = React.useState("");
     const dispatch = useReduxDispatch();
+    const toast = useToast();
 
     const handleCheck = () => {
+        if (palinddrome.length === 0) {
+            return;
+        }
         const result = checkPalindrome(palinddrome);
-        console.log(result);
+        if (result) {
+            toast.show("is Palindrome");
+        } else {
+            toast.show("not Palindrome");
+        }
     };
     return (
         <View style={{flex: 1}}>
@@ -69,8 +78,6 @@ export default function SignScreen({navigation}: Props): React.ReactElement {
                                             MainRoutes.HomeScreen,
                                         );
                                     }
-                                    // dispatch(setUserName(name));
-                                    // navigation.navigate(MainRoutes.HomeScreen);
                                 }}
                             />
                         </View>
